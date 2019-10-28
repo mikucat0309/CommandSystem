@@ -83,8 +83,6 @@ class CommandManagerImpl
     ): CommandMapping? {
         checkNotNull(metaData, "metaData")
 
-//        val container = CommandSystem.pluginManager.fromInstance(metaData)
-//        requireNotNull(container) { "The provided metaData object does not have an associated metaData container " + "(in other words, is 'metaData' actually your metaData object?" }
         synchronized(this.lock) {
             // <namespace>:<alias> for all commands
             val aliasesWithPrefix = ArrayList<String>(aliases.size * 3)
@@ -92,12 +90,12 @@ class CommandManagerImpl
                 val alias = this.fixAlias(metaData, originalAlias)
                 if (aliasesWithPrefix.contains(alias)) {
                     this.logger
-                        .debug("'${metaData.id}' is attempting to register duplicate alias '$alias'")
+                        .debug("id '${metaData.id}' is attempting to register duplicate alias '$alias'")
                     continue
                 }
                 val ownedCommands = this.owners.get(metaData)
                 for (mapping in this.dispatcher.getAll(alias)) {
-                    require(!ownedCommands.contains(mapping)) { "An id may not register multiple commands for the same alias ('$alias')!" }
+                    require(!ownedCommands.contains(mapping)) { "One id may not register multiple commands for the same alias ('$alias')!" }
                 }
 
                 aliasesWithPrefix.add(alias)
@@ -154,15 +152,6 @@ class CommandManagerImpl
             }
         }
     }
-
-//    override fun getOwnedBy(instance: Any): Set<CommandMapping> {
-//        val container = CommandSystem.pluginManager.fromInstance(instance)
-//        require(container != null) { "The provided plugin object does not have an associated plugin container " + "(in other words, is 'plugin' actually your plugin object?)" }
-//
-//        synchronized(this.lock) {
-//            return ImmutableSet.copyOf(this.owners.get(container))
-//        }
-//    }
 
     fun getOwner(mapping: CommandMapping): MetaData? {
         return this.reverseOwners[checkNotNull(mapping, "mapping")]
@@ -254,7 +243,7 @@ class CommandManagerImpl
             source.sendMessage(error("Error getting suggestions: " + e.message))
             emptyList()
         } catch (e: Exception) {
-            throw RuntimeException("Error occured while tab completing '$arguments'", e)
+            throw RuntimeException("Error occurred while tab completing '$arguments'", e)
         }
     }
 
@@ -275,6 +264,8 @@ class CommandManagerImpl
     }
 
     companion object {
+
+        val singleton = CommandManagerImpl()
 
         private val SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL)
 
