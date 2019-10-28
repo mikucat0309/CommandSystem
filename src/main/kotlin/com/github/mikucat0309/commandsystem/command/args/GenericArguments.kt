@@ -31,23 +31,23 @@ object GenericArguments {
 
     private val NONE = SequenceCommandElement(ImmutableList.of())
     private val BOOLEAN_CHOICES = ImmutableMap.builder<String, Boolean>()
-            .put("true", true)
-            .put("t", true)
-            .put("T", true)
-            .put("y", true)
-            .put("Y", true)
-            .put("yes", true)
-            .put("verymuchso", true)
-            .put("1", true)
-            .put("false", false)
-            .put("f", false)
-            .put("F", false)
-            .put("n", false)
-            .put("N", false)
-            .put("no", false)
-            .put("notatall", false)
-            .put("0", false)
-            .build()
+        .put("true", true)
+        .put("t", true)
+        .put("T", true)
+        .put("y", true)
+        .put("Y", true)
+        .put("yes", true)
+        .put("verymuchso", true)
+        .put("1", true)
+        .put("false", false)
+        .put("f", false)
+        .put("F", false)
+        .put("n", false)
+        .put("N", false)
+        .put("no", false)
+        .put("notatall", false)
+        .put("0", false)
+        .build()
 
     /**
      * Expects no arguments, returns no values.
@@ -72,7 +72,7 @@ object GenericArguments {
     }
 
     /**
-     * Expect an argument to represent a [Vector3d].
+     * Expect an argument to represent a [Vector].
      *
      *
      * This will return one value.
@@ -80,7 +80,7 @@ object GenericArguments {
      * @param key The key to store under
      * @return the argument
      */
-    fun vector3d(key: String): CommandElement {
+    fun vector(key: String): CommandElement {
         return VectorCommandElement(key)
     }
 
@@ -139,10 +139,10 @@ object GenericArguments {
      */
     fun choicesInsensitive(key: String, choices: Map<String, *>): CommandElement {
         return choices(
-                key,
-                choices,
-                choices.size <= ChoicesCommandElement.CUTOFF,
-                false
+            key,
+            choices,
+            choices.size <= ChoicesCommandElement.CUTOFF,
+            false
         )
     }
 
@@ -166,25 +166,25 @@ object GenericArguments {
      */
     @JvmOverloads
     fun choices(
-            key: String,
-            choices: Map<String, *>,
-            choicesInUsage: Boolean = choices.size <= ChoicesCommandElement.CUTOFF,
-            caseSensitive: Boolean = true
+        key: String,
+        choices: Map<String, *>,
+        choicesInUsage: Boolean = choices.size <= ChoicesCommandElement.CUTOFF,
+        caseSensitive: Boolean = true
     ): CommandElement {
         if (!caseSensitive) {
             return choices(
-                    key,
-                    Supplier<Collection<String>> { choices.keys },
-                    Function<String, Any?> { selection -> choices[selection.toLowerCase()] },
-                    choicesInUsage
+                key,
+                Supplier<Collection<String>> { choices.keys },
+                Function<String, Any?> { selection -> choices[selection.toLowerCase()] },
+                choicesInUsage
             )
         }
         val immChoices = ImmutableMap.copyOf<String, Any>(choices)
         return choices(
-                key,
-                Supplier<Collection<String>> { immChoices.keys },
-                Function<String, Any?> { immChoices[it] },
-                choicesInUsage
+            key,
+            Supplier<Collection<String>> { immChoices.keys },
+            Function<String, Any?> { immChoices[it] },
+            choicesInUsage
         )
     }
 
@@ -209,14 +209,14 @@ object GenericArguments {
      * @return the element to match the input
      */
     fun choices(
-            key: String, keys: Supplier<Collection<String>>,
-            values: Function<String, *>
+        key: String, keys: Supplier<Collection<String>>,
+        values: Function<String, *>
     ): CommandElement {
         return ChoicesCommandElement(
-                key,
-                keys,
-                values,
-                Tristate.UNDEFINED
+            key,
+            keys,
+            values,
+            Tristate.UNDEFINED
         )
     }
 
@@ -235,12 +235,12 @@ object GenericArguments {
      * @return the element to match the input
      */
     fun choices(
-            key: String, keys: Supplier<Collection<String>>,
-            values: Function<String, *>, choicesInUsage: Boolean
+        key: String, keys: Supplier<Collection<String>>,
+        values: Function<String, *>, choicesInUsage: Boolean
     ): CommandElement {
         return ChoicesCommandElement(
-                key, keys, values,
-                if (choicesInUsage) Tristate.TRUE else Tristate.FALSE
+            key, keys, values,
+            if (choicesInUsage) Tristate.TRUE else Tristate.FALSE
         )
     }
 
@@ -253,9 +253,9 @@ object GenericArguments {
      */
     fun firstParsing(vararg elements: CommandElement): CommandElement {
         return FirstParsingCommandElement(
-                ImmutableList.copyOf(
-                        elements
-                )
+            ImmutableList.copyOf(
+                elements
+            )
         )
     }
 
@@ -288,8 +288,8 @@ object GenericArguments {
      * @return the element to match the input
      */
     fun optional(
-            element: CommandElement,
-            value: Any
+        element: CommandElement,
+        value: Any
     ): CommandElement {
         return OptionalCommandElement(element, value, false)
     }
@@ -325,8 +325,8 @@ object GenericArguments {
      * @return the element to match the input
      */
     fun optionalWeak(
-            element: CommandElement,
-            value: Any
+        element: CommandElement,
+        value: Any
     ): CommandElement {
         return OptionalCommandElement(element, value, true)
     }
@@ -343,8 +343,8 @@ object GenericArguments {
      * @return the element to match the input
      */
     fun repeated(
-            element: CommandElement,
-            times: Int
+        element: CommandElement,
+        times: Int
     ): CommandElement {
         return RepeatedCommandElement(element, times)
     }
@@ -386,9 +386,9 @@ object GenericArguments {
      */
     fun integer(key: String): CommandElement {
         return NumericElement(key,
-                Function { Integer.parseInt(it) },
-                BiFunction<String, Int, Int> { s, radix -> Integer.parseInt(s, radix) },
-                Function { input -> "Expected an integer, but input '$input' was not" })
+            Function { Integer.parseInt(it) },
+            BiFunction<String, Int, Int> { s, radix -> Integer.parseInt(s, radix) },
+            Function { input -> "Expected an integer, but input '$input' was not" })
     }
 
     /**
@@ -403,9 +403,9 @@ object GenericArguments {
      */
     fun longNum(key: String): CommandElement {
         return NumericElement(key,
-                Function { java.lang.Long.parseLong(it) },
-                BiFunction<String, Int, Long> { s, radix -> java.lang.Long.parseLong(s, radix) },
-                Function { input -> "Expected a long, but input '$input' was not" })
+            Function { java.lang.Long.parseLong(it) },
+            BiFunction<String, Int, Long> { s, radix -> java.lang.Long.parseLong(s, radix) },
+            Function { input -> "Expected a long, but input '$input' was not" })
     }
 
     /**
@@ -420,9 +420,9 @@ object GenericArguments {
      */
     fun doubleNum(key: String): CommandElement {
         return NumericElement(key,
-                Function<String, Double> { java.lang.Double.parseDouble(it) },
-                null,
-                Function { input -> "Expected a number, but input '$input' was not" })
+            Function<String, Double> { java.lang.Double.parseDouble(it) },
+            null,
+            Function { input -> "Expected a number, but input '$input' was not" })
     }
 
     /**
@@ -460,8 +460,8 @@ object GenericArguments {
      */
     fun bool(key: String): CommandElement {
         return choices(
-                key,
-                BOOLEAN_CHOICES
+            key,
+            BOOLEAN_CHOICES
         )
     }
 
@@ -525,9 +525,9 @@ object GenericArguments {
      */
     fun literal(key: String, vararg expectedArgs: String): CommandElement {
         return LiteralCommandElement(
-                key,
-                ImmutableList.copyOf(expectedArgs),
-                true
+            key,
+            ImmutableList.copyOf(expectedArgs),
+            true
         )
     }
 
@@ -545,13 +545,13 @@ object GenericArguments {
      * @return the appropriate command element
      */
     fun literal(
-            key: String, putValue: Any?,
-            vararg expectedArgs: String
+        key: String, putValue: Any?,
+        vararg expectedArgs: String
     ): CommandElement {
         return LiteralCommandElement(
-                key,
-                ImmutableList.copyOf(expectedArgs),
-                putValue
+            key,
+            ImmutableList.copyOf(expectedArgs),
+            putValue
         )
     }
 
@@ -635,7 +635,7 @@ object GenericArguments {
      * @see [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601)
      */
     fun dateTime(key: String): CommandElement {
-        return GenericArguments.DateTimeElement(key, false)
+        return DateTimeElement(key, false)
     }
 
     /**
@@ -657,7 +657,7 @@ object GenericArguments {
      * @return the argument
      */
     fun dateTimeOrNow(key: String): CommandElement {
-        return GenericArguments.DateTimeElement(key, true)
+        return DateTimeElement(key, true)
     }
 
     /**
@@ -674,7 +674,7 @@ object GenericArguments {
      * @return the argument
      */
     fun duration(key: String): CommandElement {
-        return GenericArguments.DurationElement(key)
+        return DurationElement(key)
     }
 
     /**
@@ -692,13 +692,13 @@ object GenericArguments {
      */
     @JvmOverloads
     fun withSuggestions(
-            argument: CommandElement,
-            suggestions: Iterable<String>, requireBegin: Boolean = true
+        argument: CommandElement,
+        suggestions: Iterable<String>, requireBegin: Boolean = true
     ): CommandElement {
-        return GenericArguments.withSuggestions(
-                argument,
-                Function { suggestions },
-                requireBegin
+        return withSuggestions(
+            argument,
+            Function { suggestions },
+            requireBegin
         )
     }
 
@@ -717,14 +717,14 @@ object GenericArguments {
      */
     @JvmOverloads
     fun withSuggestions(
-            argument: CommandElement,
-            suggestions: Function<CommandSource, Iterable<String>>,
-            requireBegin: Boolean = true
+        argument: CommandElement,
+        suggestions: Function<CommandSource, Iterable<String>>,
+        requireBegin: Boolean = true
     ): CommandElement {
-        return GenericArguments.WithSuggestionsElement(
-                argument,
-                suggestions,
-                requireBegin
+        return WithSuggestionsElement(
+            argument,
+            suggestions,
+            requireBegin
         )
     }
 
@@ -736,26 +736,26 @@ object GenericArguments {
      * @return the argument
      */
     fun withConstrainedSuggestions(
-            argument: CommandElement,
-            predicate: Predicate<String>
+        argument: CommandElement,
+        predicate: Predicate<String>
     ): CommandElement {
-        return GenericArguments.FilteredSuggestionsElement(argument, predicate)
+        return FilteredSuggestionsElement(argument, predicate)
     }
 
     internal class MarkTrueCommandElement(key: String) : CommandElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return true
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return emptyList()
         }
@@ -766,13 +766,13 @@ object GenericArguments {
     }
 
     private class SequenceCommandElement internal constructor(private val elements: List<CommandElement>) :
-            CommandElement(null) {
+        CommandElement(null) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             for (element in this.elements) {
                 element.parse(source, args, context)
@@ -781,16 +781,16 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return null
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             val completions = Sets.newHashSet<String>()
             for (element in elements) {
@@ -837,25 +837,25 @@ object GenericArguments {
     }
 
     private class ChoicesCommandElement internal constructor(
-            key: String, private val keySupplier: Supplier<Collection<String>>,
-            private val valueSupplier: Function<String, *>, private val choicesInUsage: Tristate
+        key: String, private val keySupplier: Supplier<Collection<String>>,
+        private val valueSupplier: Function<String, *>, private val choicesInUsage: Tristate
     ) : CommandElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return valueSupplier.apply(args.next())
-                    ?: throw args.createError(
-                            "Argument was not a valid choice. Valid choices: " + keySupplier.get().toString()
-                    )
+                ?: throw args.createError(
+                    "Argument was not a valid choice. Valid choices: " + keySupplier.get().toString()
+                )
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             val prefix = args.nextIfPresent().orElse("")
             return this.keySupplier.get().stream().filter { startsWith(it, prefix) }.toList()
@@ -886,13 +886,13 @@ object GenericArguments {
     }
 
     private class FirstParsingCommandElement internal constructor(private val elements: List<CommandElement>) :
-            CommandElement(null) {
+        CommandElement(null) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             var lastException: ArgumentParseException? = null
             for (element in this.elements) {
@@ -915,29 +915,29 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return null
         }
 
         override fun complete(
-                src: CommandSource, args: CommandArgs,
-                context: CommandContext
+            src: CommandSource, args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return ImmutableList.copyOf(
-                    Iterables.concat(Iterables.transform(
-                            this.elements
-                    ) { input ->
-                        if (input == null) {
-                            return@transform ImmutableList.of<String>()
-                        }
+                Iterables.concat(Iterables.transform(
+                    this.elements
+                ) { input ->
+                    if (input == null) {
+                        return@transform ImmutableList.of<String>()
+                    }
 
-                        val snapshot = args.snapshot
-                        val ret = input.complete(src, args, context)
-                        args.applySnapshot(snapshot)
-                        ret
-                    })
+                    val snapshot = args.snapshot
+                    val ret = input.complete(src, args, context)
+                    args.applySnapshot(snapshot)
+                    ret
+                })
             )
         }
 
@@ -955,15 +955,15 @@ object GenericArguments {
     }
 
     private class OptionalCommandElement internal constructor(
-            private val element: CommandElement, private val value: Any?,
-            private val considerInvalidFormatEmpty: Boolean
+        private val element: CommandElement, private val value: Any?,
+        private val considerInvalidFormatEmpty: Boolean
     ) : CommandElement(null) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             if (!args.hasNext()) {
                 val key = this.element.key
@@ -977,7 +977,7 @@ object GenericArguments {
                 this.element.parse(source, args, context)
             } catch (ex: ArgumentParseException) {
                 if (this.considerInvalidFormatEmpty || args
-                                .hasNext()
+                        .hasNext()
                 ) { // If there are more args, suppress. Otherwise, throw the error
                     args.applySnapshot(startState)
                     if (this.element.key != null && this.value != null) {
@@ -992,16 +992,16 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return if (args.hasNext()) null else this.element.parseValue(source, args)
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return this.element.complete(src, args, context)
         }
@@ -1012,16 +1012,16 @@ object GenericArguments {
     }
 
     private class RepeatedCommandElement(
-            private val element: CommandElement,
-            private val times: Int
+        private val element: CommandElement,
+        private val times: Int
     ) :
-            CommandElement(null) {
+        CommandElement(null) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             for (i in 0 until this.times) {
                 this.element.parse(source, args, context)
@@ -1030,16 +1030,16 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return null
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             for (i in 0 until this.times) {
                 val startState = args.snapshot
@@ -1060,13 +1060,13 @@ object GenericArguments {
     }
 
     private class AllOfCommandElement(private val element: CommandElement) :
-            CommandElement(null) {
+        CommandElement(null) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             while (args.hasNext()) {
                 this.element.parse(source, args, context)
@@ -1075,16 +1075,16 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return null
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             while (args.hasNext()) {
                 val startState = args.snapshot
@@ -1111,36 +1111,36 @@ object GenericArguments {
     private abstract class KeyElement(key: String) : CommandElement(key) {
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return emptyList()
         }
     }
 
     private class StringElement internal constructor(key: String) :
-            GenericArguments.KeyElement(key) {
+        GenericArguments.KeyElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return args.next()
         }
     }
 
     private class NumericElement<T : Number>(
-            key: String, private val parseFunc: Function<String, T>,
-            private val parseRadixFunction: BiFunction<String, Int, T>?,
-            private val errorSupplier: Function<String, String>
+        key: String, private val parseFunc: Function<String, T>,
+        private val parseRadixFunction: BiFunction<String, Int, T>?,
+        private val errorSupplier: Function<String, String>
     ) : GenericArguments.KeyElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             val input = args.next()
             try {
@@ -1161,7 +1161,7 @@ object GenericArguments {
 
 
     private class EnumValueElement<T : Enum<T>> internal constructor(key: String, private val type: Class<T>) :
-            PatternMatchingCommandElement(key) {
+        PatternMatchingCommandElement(key) {
         private val values: Map<String, T> = type.enumConstants.map { it.name.toLowerCase() to it }.toMap()
 
         override fun getChoices(source: CommandSource): Iterable<String> {
@@ -1172,20 +1172,20 @@ object GenericArguments {
         override fun getValue(choice: String): Any {
 
             return values[choice.toLowerCase()]
-                    ?: throw IllegalArgumentException(
-                            "No enum constant " + type.canonicalName + "." + choice
-                    )
+                ?: throw IllegalArgumentException(
+                    "No enum constant " + type.canonicalName + "." + choice
+                )
         }
     }
 
 
     private class RemainingJoinedStringsCommandElement internal constructor(key: String, private val raw: Boolean) :
-            GenericArguments.KeyElement(key) {
+        GenericArguments.KeyElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             if (this.raw) {
                 args.next()
@@ -1210,8 +1210,8 @@ object GenericArguments {
     }
 
     private class LiteralCommandElement(
-            key: String?, expectedArgs: List<String>,
-            private val putValue: Any?
+        key: String?, expectedArgs: List<String>,
+        private val putValue: Any?
     ) : CommandElement(key) {
 
         private val expectedArgs: List<String>
@@ -1222,23 +1222,23 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             for (arg in this.expectedArgs) {
                 val current = args.next()
                 if (!current.equals(arg, ignoreCase = true)) {
                     throw args
-                            .createError("Argument $current did not match expected next argument $arg")
+                        .createError("Argument $current did not match expected next argument $arg")
                 }
             }
             return this.putValue
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             for (arg in this.expectedArgs) {
                 val next = args.nextIfPresent()
@@ -1251,7 +1251,7 @@ object GenericArguments {
                 } else {
                     if (arg.toLowerCase().startsWith(next.get().toLowerCase())) { // Case-insensitive compare
                         return ImmutableList
-                                .of(arg) // TODO: Possibly complete all remaining args? Does that even work
+                            .of(arg) // TODO: Possibly complete all remaining args? Does that even work
                     }
                 }
             }
@@ -1267,8 +1267,8 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             var xStr: String
             val yStr: String
@@ -1278,7 +1278,7 @@ object GenericArguments {
                 val split = xStr.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 if (split.size != 3) {
                     throw args
-                            .createError("Comma-separated location must have 3 elements, not " + split.size)
+                        .createError("Comma-separated location must have 3 elements, not " + split.size)
                 }
                 xStr = split[0]
                 yStr = split[1]
@@ -1298,9 +1298,9 @@ object GenericArguments {
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             var arg = args.nextIfPresent()
             // Traverse through the possible arguments. We can't really complete arbitrary integers
@@ -1329,13 +1329,13 @@ object GenericArguments {
     }
 
     private class OnlyOneCommandElement(private val element: CommandElement) :
-            CommandElement(element.key) {
+        CommandElement(element.key) {
 
         @Throws(ArgumentParseException::class)
         override fun parse(
-                source: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            source: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ) {
             this.element.parse(source, args, context)
             if (this.element.key?.let { context.getAll<Any>(it).size }!! > 1) {
@@ -1350,16 +1350,16 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return this.element.parseValue(source, args)
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return this.element.complete(src, args, context)
         }
@@ -1369,8 +1369,8 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             val str = args.next()
             val url: URL
@@ -1391,12 +1391,12 @@ object GenericArguments {
     }
 
     private class BigDecimalElement(key: String) :
-            GenericArguments.KeyElement(key) {
+        GenericArguments.KeyElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             val next = args.next()
             try {
@@ -1409,12 +1409,12 @@ object GenericArguments {
     }
 
     private class BigIntegerElement(key: String) :
-            GenericArguments.KeyElement(key) {
+        GenericArguments.KeyElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             val integerString = args.next()
             try {
@@ -1430,8 +1430,8 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             try {
                 return UUID.fromString(args.next())
@@ -1444,12 +1444,12 @@ object GenericArguments {
     }
 
     private class DateTimeElement(key: String, private val returnNow: Boolean) :
-            CommandElement(key) {
+        CommandElement(key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             if (!args.hasNext() && this.returnNow) {
                 return LocalDateTime.now()
@@ -1479,9 +1479,9 @@ object GenericArguments {
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             val date = LocalDateTime.now().withNano(0).toString()
             return if (date.startsWith(args.nextIfPresent().orElse(""))) {
@@ -1504,8 +1504,8 @@ object GenericArguments {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             var s = args.next().toUpperCase()
             if (!s.contains("T")) {
@@ -1534,28 +1534,28 @@ object GenericArguments {
     }
 
     private class WithSuggestionsElement(
-            private val wrapped: CommandElement,
-            private val suggestions: Function<CommandSource, Iterable<String>>,
-            private val requireBegin: Boolean
+        private val wrapped: CommandElement,
+        private val suggestions: Function<CommandSource, Iterable<String>>,
+        private val requireBegin: Boolean
     ) : CommandElement(wrapped.key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return this.wrapped.parseValue(source, args)
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return if (this.requireBegin) {
                 val arg = args.nextIfPresent().orElse("")
                 ImmutableList
-                        .copyOf(Iterables.filter(this.suggestions.apply(src)) { f -> f!!.startsWith(arg) })
+                    .copyOf(Iterables.filter(this.suggestions.apply(src)) { f -> f!!.startsWith(arg) })
             } else {
                 ImmutableList.copyOf(this.suggestions.apply(src))
             }
@@ -1564,25 +1564,25 @@ object GenericArguments {
     }
 
     private class FilteredSuggestionsElement(
-            private val wrapped: CommandElement,
-            private val predicate: Predicate<String>
+        private val wrapped: CommandElement,
+        private val predicate: Predicate<String>
     ) : CommandElement(wrapped.key) {
 
         @Throws(ArgumentParseException::class)
         override fun parseValue(
-                source: CommandSource,
-                args: CommandArgs
+            source: CommandSource,
+            args: CommandArgs
         ): Any? {
             return this.wrapped.parseValue(source, args)
         }
 
         override fun complete(
-                src: CommandSource,
-                args: CommandArgs,
-                context: CommandContext
+            src: CommandSource,
+            args: CommandArgs,
+            context: CommandContext
         ): List<String> {
             return this.wrapped.complete(src, args, context).stream().filter(this.predicate)
-                    .toList()
+                .toList()
         }
 
     }

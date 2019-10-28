@@ -12,7 +12,7 @@ class CommandNotFoundException
  * @param message The message
  * @param command The command that was queried for
  */
-(message: String, command: String) : CommandException(message) {
+    (message: String, command: String) : CommandException(message) {
 
     /**
      * Returns the command that was queried for.

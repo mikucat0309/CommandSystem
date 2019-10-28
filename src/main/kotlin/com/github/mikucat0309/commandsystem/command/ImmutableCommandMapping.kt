@@ -12,13 +12,13 @@ class ImmutableCommandMapping
  * Create a new instance.
  *
  * @param callable The command callable
- * @param primary  The primary alias
+ * @param primaryAlias  The primary alias
  * @param aliases  A collection of all aliases
  * @throws IllegalArgumentException Thrown if aliases are duplicated
  */
-(
-        callable: CommandCallable, override val primaryAlias: String,
-        aliases: Collection<String>
+    (
+    callable: CommandCallable, override val primaryAlias: String,
+    aliases: Collection<String>
 ) : CommandMapping {
     private val aliases: MutableSet<String>
     override val callable: CommandCallable
@@ -35,9 +35,9 @@ class ImmutableCommandMapping
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
     constructor(callable: CommandCallable, primary: String, vararg alias: String) : this(
-            callable,
-            primary,
-            alias.asList()
+        callable,
+        primary,
+        alias.asList()
     )
 
     init {

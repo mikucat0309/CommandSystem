@@ -24,15 +24,15 @@ class ChildCommandElementExecutor
  * elements. If false, a child command will not pass control back to the
  * parent, displaying its own exception message
  */
-(
-        private val fallbackExecutor: CommandExecutor?,
-        fallbackElements: CommandElement?,
-        private val fallbackOnFail: Boolean
+    (
+    private val fallbackExecutor: CommandExecutor?,
+    fallbackElements: CommandElement?,
+    private val fallbackOnFail: Boolean
 ) : CommandElement("child" + COUNTER.getAndIncrement()),
-        CommandExecutor {
+    CommandExecutor {
     private val fallbackElements: CommandElement?
     private val dispatcher = SimpleDispatcher(
-            SimpleDispatcher.FIRST_DISAMBIGUATOR
+        SimpleDispatcher.FIRST_DISAMBIGUATOR
     )
 
     /**
@@ -43,18 +43,18 @@ class ChildCommandElementExecutor
      * (Generally when this is wrapped in a [GenericArguments.optional]
      */
     @Deprecated(
-            "Use the other constructor instead. Note: this entire system will be replaced in API\n" +
-                    "    8."
+        "Use the other constructor instead. Note: this entire system will be replaced in API\n" +
+                "    8."
     )
     constructor(fallbackExecutor: CommandExecutor?) : this(
-            fallbackExecutor,
-            null,
-            true
+        fallbackExecutor,
+        null,
+        true
     )
 
     init {
         this.fallbackElements =
-                if (NONE === fallbackElements) null else fallbackElements
+            if (NONE === fallbackElements) null else fallbackElements
     }
 
     /**
@@ -65,8 +65,8 @@ class ChildCommandElementExecutor
      * @return The child command's mapping, if present
      */
     fun register(
-            callable: CommandCallable,
-            aliases: List<String>
+        callable: CommandCallable,
+        aliases: List<String>
     ): CommandMapping? {
         return this.dispatcher.register(callable, aliases)
     }
@@ -79,16 +79,16 @@ class ChildCommandElementExecutor
      * @return The child command's mapping, if present
      */
     fun register(
-            callable: CommandCallable,
-            vararg aliases: String
+        callable: CommandCallable,
+        vararg aliases: String
     ): CommandMapping? {
         return this.dispatcher.register(callable, *aliases)
     }
 
     override fun complete(
-            src: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        src: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String> {
         val completions = Lists.newArrayList<String>()
         if (this.fallbackElements != null) {
@@ -105,9 +105,9 @@ class ChildCommandElementExecutor
             val child = this.dispatcher[commandComponent.get(), src] ?: return ImmutableList.of()
             if (child.callable is CommandSpec) {
                 return (child.callable as CommandSpec).complete(
-                        src,
-                        args,
-                        context
+                    src,
+                    args,
+                    context
                 )
             }
             args.nextIfPresent()
@@ -136,9 +136,9 @@ class ChildCommandElementExecutor
 
     @Throws(ArgumentParseException::class)
     override fun parse(
-            source: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ) {
         if (this.fallbackExecutor != null && !args.hasNext()) {
             if (this.fallbackElements != null) {
@@ -183,14 +183,14 @@ class ChildCommandElementExecutor
                 if (ex is ArgumentParseException.WithUsage) {
                     // This indicates a previous child failed, so we just prepend our child
                     throw ArgumentParseException.WithUsage(
-                            ex,
-                            key + " " + ex.usage
+                        ex,
+                        key + " " + ex.usage
                     )
                 }
 
                 throw ArgumentParseException.WithUsage(
-                        ex,
-                        key + " " + optionalCommandMapping.callable.getUsage(source)
+                    ex,
+                    key + " " + optionalCommandMapping.callable.getUsage(source)
                 )
             }
 
@@ -209,22 +209,22 @@ class ChildCommandElementExecutor
 
     @Throws(ArgumentParseException::class)
     override fun parseValue(
-            source: CommandSource,
-            args: CommandArgs
+        source: CommandSource,
+        args: CommandArgs
     ): Any? {
         return null
     }
 
     @Throws(CommandException::class)
     override fun execute(
-            src: CommandSource,
-            args: CommandContext
+        src: CommandSource,
+        args: CommandContext
     ): CommandResult {
         val mapping = key?.let { args.getOne<CommandMapping>(it) }
         if (mapping == null) {
             if (this.fallbackExecutor == null) {
                 throw CommandException(
-                        "Invalid subcommand state -- no more than one mapping may be provided for child arg " + key!!
+                    "Invalid subcommand state -- no more than one mapping may be provided for child arg " + key!!
                 )
             }
             return this.fallbackExecutor.execute(src, args)

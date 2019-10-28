@@ -6,12 +6,12 @@ import com.github.mikucat0309.commandsystem.command.CommandSource
  * Represents a command argument element.
  */
 abstract class CommandElement protected constructor(
-        /**
-         * Return the key to be used for this object.
-         *
-         * @return the user-facing representation of the key
-         */
-        val key: String?
+    /**
+     * Return the key to be used for this object.
+     *
+     * @return the user-facing representation of the key
+     */
+    val key: String?
 ) {
 
     /**
@@ -27,9 +27,9 @@ abstract class CommandElement protected constructor(
      */
     @Throws(ArgumentParseException::class)
     open fun parse(
-            source: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ) {
         val value = parseValue(source, args)
         val key = this.key
@@ -58,8 +58,8 @@ abstract class CommandElement protected constructor(
      */
     @Throws(ArgumentParseException::class)
     abstract fun parseValue(
-            source: CommandSource,
-            args: CommandArgs
+        source: CommandSource,
+        args: CommandArgs
     ): Any?
 
     /**
@@ -71,8 +71,8 @@ abstract class CommandElement protected constructor(
      * @return Any relevant completions
      */
     abstract fun complete(
-            src: CommandSource, args: CommandArgs,
-            context: CommandContext
+        src: CommandSource, args: CommandArgs,
+        context: CommandContext
     ): List<String>
 
     /**

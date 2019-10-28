@@ -19,14 +19,14 @@ import java.util.*
  * ARGS := ((UNQUOTED_ARG | QUOTED_ARG) WHITESPACE+)+</pre></blockquote>
  */
 internal class QuotedStringTokenizer(
-        private val handleQuotedStrings: Boolean, private val forceLenient: Boolean,
-        private val trimTrailingSpace: Boolean
+    private val handleQuotedStrings: Boolean, private val forceLenient: Boolean,
+    private val trimTrailingSpace: Boolean
 ) : InputTokenizer {
 
     @Throws(ArgumentParseException::class)
     override fun tokenize(
-            arguments: String,
-            lenient: Boolean
+        arguments: String,
+        lenient: Boolean
     ): List<SingleArg> {
         if (arguments.isEmpty()) {
             return emptyList()
@@ -80,19 +80,19 @@ internal class QuotedStringTokenizer(
 
     @Throws(ArgumentParseException::class)
     private fun parseQuotedString(
-            state: TokenizerState,
-            startQuotation: Int,
-            builder: StringBuilder
+        state: TokenizerState,
+        startQuotation: Int,
+        builder: StringBuilder
     ) {
         // Consume the start quotation character
         var nextCodePoint = state.next()
         if (nextCodePoint != startQuotation) {
             throw state.createException(
-                    String
-                            .format(
-                                    "Actual next character '%c' did not match expected quotation character '%c'",
-                                    nextCodePoint, startQuotation
-                            )
+                String
+                    .format(
+                        "Actual next character '%c' did not match expected quotation character '%c'",
+                        nextCodePoint, startQuotation
+                    )
             )
         }
 
@@ -110,8 +110,8 @@ internal class QuotedStringTokenizer(
                     return
                 }
                 CHAR_BACKSLASH -> parseEscape(
-                        state,
-                        builder
+                    state,
+                    builder
                 )
                 else -> builder.appendCodePoint(state.next())
             }
@@ -120,16 +120,16 @@ internal class QuotedStringTokenizer(
 
     @Throws(ArgumentParseException::class)
     private fun parseUnquotedString(
-            state: TokenizerState,
-            builder: StringBuilder
+        state: TokenizerState,
+        builder: StringBuilder
     ) {
         while (state.hasMore()) {
             val nextCodePoint = state.peek()
             when {
                 Character.isWhitespace(nextCodePoint) -> return
                 nextCodePoint == CHAR_BACKSLASH -> parseEscape(
-                        state,
-                        builder
+                    state,
+                    builder
                 )
                 else -> builder.appendCodePoint(state.next())
             }

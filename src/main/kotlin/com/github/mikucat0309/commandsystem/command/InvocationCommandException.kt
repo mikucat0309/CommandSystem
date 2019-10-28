@@ -11,4 +11,4 @@ class InvocationCommandException
  * @param message The detail message
  * @param cause   The cause
  */
-(message: String, cause: Throwable) : CommandException(message, cause)
+    (message: String, cause: Throwable) : CommandException(message, cause)

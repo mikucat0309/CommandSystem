@@ -16,8 +16,8 @@ class CommandResult
  * @param queryResult The query result
  */
 internal constructor(
-        successCount: Int?, affectedBlocks: Int?, affectedEntities: Int?,
-        affectedItems: Int?, queryResult: Int?
+    successCount: Int?, affectedBlocks: Int?, affectedEntities: Int?,
+    affectedItems: Int?, queryResult: Int?
 ) {
     /**
      * Gets the success count of the command.
@@ -136,11 +136,11 @@ internal constructor(
          */
         fun build(): CommandResult {
             return CommandResult(
-                    this.successCount,
-                    this.affectedBlocks,
-                    this.affectedEntities,
-                    this.affectedItems,
-                    this.queryResult
+                this.successCount,
+                this.affectedBlocks,
+                this.affectedEntities,
+                this.affectedItems,
+                this.queryResult
             )
         }
     }
@@ -165,7 +165,7 @@ internal constructor(
          * @return The command result
          */
         fun empty(): CommandResult {
-            return CommandResult.EMPTY
+            return EMPTY
         }
 
         /**

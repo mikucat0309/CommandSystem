@@ -12,12 +12,12 @@ import kotlin.streams.toList
  * Abstract command element that matches values based on pattern.
  */
 abstract class PatternMatchingCommandElement protected constructor(key: String?) :
-        CommandElement(key) {
+    CommandElement(key) {
 
     @Throws(ArgumentParseException::class)
     override fun parseValue(
-            source: CommandSource,
-            args: CommandArgs
+        source: CommandSource,
+        args: CommandArgs
     ): Any? {
         val unformattedPattern = args.next()
         val choices = getChoices(source)
@@ -36,24 +36,24 @@ abstract class PatternMatchingCommandElement protected constructor(key: String?)
 
         if (!ret.iterator().hasNext()) {
             throw args.createError(
-                    "No values matching pattern \'$unformattedPattern\' present for ${key
-                            ?: nullKeyArg}!"
+                "No values matching pattern \'$unformattedPattern\' present for ${key
+                    ?: nullKeyArg}!"
             )
         }
         return ret
     }
 
     override fun complete(
-            src: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        src: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String> {
         var choices = getChoices(src)
         val nextArg = args.nextIfPresent()
         if (nextArg.isPresent) {
             choices = StreamSupport.stream(choices.spliterator(), false)
-                    .filter { getFormattedPattern(nextArg.get()).matcher(it).find() }
-                    .toList()
+                .filter { getFormattedPattern(nextArg.get()).matcher(it).find() }
+                .toList()
         }
         return ImmutableList.copyOf(choices)
     }
@@ -75,12 +75,12 @@ abstract class PatternMatchingCommandElement protected constructor(key: String?)
      * @return If matched, an [Optional] containing the matched value
      */
     protected fun getExactMatch(
-            choices: Iterable<String>,
-            potentialChoice: String
+        choices: Iterable<String>,
+        potentialChoice: String
     ): Optional<Any> {
 
         return Iterables.tryFind(choices) { potentialChoice.equals(it, true) }
-                .toJavaUtil().map { this.getValue(it) }
+            .toJavaUtil().map { this.getValue(it) }
     }
 
     /**

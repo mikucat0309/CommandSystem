@@ -5,11 +5,11 @@ import java.util.*
 import java.util.regex.Pattern
 
 internal class SpaceSplitInputTokenizer private constructor() :
-        InputTokenizer {
+    InputTokenizer {
 
     override fun tokenize(
-            arguments: String,
-            lenient: Boolean
+        arguments: String,
+        lenient: Boolean
     ): List<SingleArg> {
         var arguments = arguments
         if (SPACE_REGEX.matcher(arguments).matches()) {
@@ -22,11 +22,11 @@ internal class SpaceSplitInputTokenizer private constructor() :
         while (spaceIndex != -1) {
             arguments = if (spaceIndex != 0) {
                 ret.add(
-                        SingleArg(
-                                arguments.substring(0, spaceIndex),
-                                lastIndex,
-                                lastIndex + spaceIndex
-                        )
+                    SingleArg(
+                        arguments.substring(0, spaceIndex),
+                        lastIndex,
+                        lastIndex + spaceIndex
+                    )
                 )
                 arguments.substring(spaceIndex)
             } else {
@@ -37,11 +37,11 @@ internal class SpaceSplitInputTokenizer private constructor() :
         }
 
         ret.add(
-                SingleArg(
-                        arguments,
-                        lastIndex,
-                        lastIndex + arguments.length
-                )
+            SingleArg(
+                arguments,
+                lastIndex,
+                lastIndex + arguments.length
+            )
         )
         return ret
     }

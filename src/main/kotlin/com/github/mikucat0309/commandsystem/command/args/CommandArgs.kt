@@ -11,16 +11,16 @@ class CommandArgs
 /**
  * Create a new CommandArgs instance with the given raw input and arguments.
  *
- * @param rawInput Raw input
+ * @param raw Raw input
  * @param args     Arguments extracted from the raw input
  */
-(
-        /**
-         * Return the raw string used to provide input to this arguments object.
-         *
-         * @return The raw input
-         */
-        val raw: String, args: List<SingleArg>
+    (
+    /**
+     * Return the raw string used to provide input to this arguments object.
+     *
+     * @return The raw input
+     */
+    val raw: String, args: List<SingleArg>
 ) {
     private val args: MutableList<SingleArg>
     private var index = -1
@@ -33,16 +33,6 @@ class CommandArgs
     val all: List<String>
         get() = this.args.map { it.value }.toList()
 
-    /**
-     * Return this arguments object's current state. Can be used to reset with the [ ][.setState] method.
-     *
-     * @return The current state
-     */
-    /**
-     * Restore the arguments object's state to a state previously used.
-     *
-     * @param state the previous state
-     */
     // keep parity with before
     var state: Any
         @Deprecated("Use {@link #getSnapshot()} and {@link #applySnapshot(Snapshot)} instead")
@@ -133,8 +123,8 @@ class CommandArgs
      */
     fun createError(message: String): ArgumentParseException {
         return ArgumentParseException(
-                message, this.raw,
-                if (this.index < 0) 0 else this.args[this.index].startIdx
+            message, this.raw,
+            if (this.index < 0) 0 else this.args[this.index].startIdx
         )
     }
 
@@ -168,8 +158,8 @@ class CommandArgs
      * @param endState   The ending state
      */
     @Deprecated(
-            "Use with {@link #getSnapshot()} instead of {@link #getState()} with {@link\n" +
-                    "   * #removeArgs(Snapshot, Snapshot)}"
+        "Use with {@link #getSnapshot()} instead of {@link #getState()} with {@link\n" +
+                "   * #removeArgs(Snapshot, Snapshot)}"
     )
     fun removeArgs(startState: Any, endState: Any) {
         require(!(startState !is Int || endState !is Int)) { "One of the states provided was not of the correct type!" }
@@ -184,8 +174,8 @@ class CommandArgs
      * @param endSnapshot   The ending state
      */
     fun removeArgs(
-            startSnapshot: Snapshot,
-            endSnapshot: Snapshot
+        startSnapshot: Snapshot,
+        endSnapshot: Snapshot
     ) {
         removeArgs(startSnapshot.index, endSnapshot.index)
     }
@@ -245,11 +235,11 @@ class CommandArgs
      * snapshot should be considered a black box.
      */
     inner class Snapshot internal constructor(
-            internal val index: Int,
-            args: List<SingleArg>
+        internal val index: Int,
+        args: List<SingleArg>
     ) {
         internal val args: ImmutableList<SingleArg> =
-                ImmutableList.copyOf(args)
+            ImmutableList.copyOf(args)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

@@ -102,7 +102,7 @@ class CommandContext {
      *
      * @return The [Snapshot] containing the current state of the [CommandContext]
      */
-    fun createSnapshot(): com.github.mikucat0309.commandsystem.command.args.CommandContext.Snapshot {
+    fun createSnapshot(): Snapshot {
         return Snapshot(this.parsedArgs)
     }
 
@@ -111,7 +111,7 @@ class CommandContext {
      *
      * @param snapshot The [Snapshot] to restore this context with
      */
-    fun applySnapshot(snapshot: com.github.mikucat0309.commandsystem.command.args.CommandContext.Snapshot) {
+    fun applySnapshot(snapshot: Snapshot) {
         this.parsedArgs.clear()
         this.parsedArgs.putAll(snapshot.args)
     }
@@ -135,6 +135,6 @@ class CommandContext {
          * The argument key to indicate that a tab completion is taking place.
          */
         const val TAB_COMPLETION =
-                "tab-complete-99999" // Random junk afterwards so we don't accidentally conflict with other args
+            "tab-complete-99999" // Random junk afterwards so we don't accidentally conflict with other args
     }
 }

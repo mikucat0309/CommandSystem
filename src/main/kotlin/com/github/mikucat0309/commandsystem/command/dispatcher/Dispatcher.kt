@@ -66,8 +66,8 @@ interface Dispatcher : CommandCallable {
      * @return The command mapping, if available
      */
     operator fun get(
-            alias: String,
-            source: CommandSource?
+        alias: String,
+        source: CommandSource?
     ): CommandMapping?
 
     /**

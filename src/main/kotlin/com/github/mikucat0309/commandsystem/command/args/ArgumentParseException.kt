@@ -77,19 +77,19 @@ open class ArgumentParseException : CommandException {
      * An [ArgumentParseException] where the usage is already specified.
      */
     class WithUsage(
-            wrapped: ArgumentParseException,
+        wrapped: ArgumentParseException,
 
-            /**
-             * Gets the usage associated with this exception.
-             *
-             * @return The usage
-             */
-            val usage: String
+        /**
+         * Gets the usage associated with this exception.
+         *
+         * @return The usage
+         */
+        val usage: String
     ) : ArgumentParseException(
-            wrapped.message,
-            wrapped.cause,
-            wrapped.sourceString,
-            wrapped.position
+        wrapped.message,
+        wrapped.cause,
+        wrapped.sourceString,
+        wrapped.position
     )
 
 }

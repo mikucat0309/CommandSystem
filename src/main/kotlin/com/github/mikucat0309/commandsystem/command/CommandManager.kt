@@ -1,5 +1,6 @@
 package com.github.mikucat0309.commandsystem.command
 
+import com.github.mikucat0309.commandsystem.MetaData
 import com.github.mikucat0309.commandsystem.command.dispatcher.Dispatcher
 import java.util.*
 import java.util.function.Function
@@ -22,16 +23,16 @@ interface CommandManager : Dispatcher {
      *
      * The first non-conflicted alias becomes the "primary alias."
      *
-     * @param plugin   A plugin instance
+     * @param metaData   A metaData instance
      * @param callable The command
      * @param alias    An array of aliases
      * @return The registered command mapping, unless no aliases could be registered
-     * @throws IllegalArgumentException Thrown if `plugin` is not a plugin instance
+     * @throws IllegalArgumentException Thrown if `metaData` is not a metaData instance
      */
     fun register(
-            plugin: Any,
-            callable: CommandCallable,
-            vararg alias: String
+        metaData: MetaData,
+        callable: CommandCallable,
+        vararg alias: String
     ): CommandMapping?
 
     /**
@@ -46,16 +47,16 @@ interface CommandManager : Dispatcher {
      *
      * The first non-conflicted alias becomes the "primary alias."
      *
-     * @param plugin   A plugin instance
+     * @param metaData   A metadata instance
      * @param callable The command
      * @param aliases  A list of aliases
      * @return The registered command mapping, unless no aliases could be registered
-     * @throws IllegalArgumentException Thrown if `plugin` is not a plugin instance
+     * @throws IllegalArgumentException Thrown if `metaData` is not a metaData instance
      */
     fun register(
-            plugin: Any,
-            callable: CommandCallable,
-            aliases: List<String>
+        metaData: MetaData,
+        callable: CommandCallable,
+        aliases: List<String>
     ): CommandMapping?
 
     /**
@@ -72,17 +73,17 @@ interface CommandManager : Dispatcher {
      *
      * The first non-conflicted alias becomes the "primary alias."
      *
-     * @param plugin   A plugin instance
+     * @param metaData   A metaData instance
      * @param callable The command
      * @param aliases  A list of aliases
      * @param callback The callback
      * @return The registered command mapping, unless no aliases could be registered
      * @throws IllegalArgumentException Thrown if new conflicting aliases are added in the callback
-     * @throws IllegalArgumentException Thrown if `plugin` is not a plugin instance
+     * @throws IllegalArgumentException Thrown if `metaData` is not a metaData instance
      */
     fun register(
-            plugin: Any, callable: CommandCallable, aliases: List<String>,
-            callback: Function<List<String>, List<String>>
+        metaData: MetaData, callable: CommandCallable, aliases: List<String>,
+        callback: Function<List<String>, List<String>>
     ): CommandMapping?
 
     /**
@@ -93,13 +94,13 @@ interface CommandManager : Dispatcher {
      */
     fun removeMapping(mapping: CommandMapping): Optional<CommandMapping>
 
-    /**
-     * Gets a set of commands owned by the given plugin instance.
-     *
-     * @param instance The plugin instance
-     * @return A set of mappings
-     */
-    fun getOwnedBy(instance: Any): Set<CommandMapping>
+//    /**
+//     * Gets a set of commands owned by the given plugin instance.
+//     *
+//     * @param instance The plugin instance
+//     * @return A set of mappings
+//     */
+//    fun getOwnedBy(instance: Any): Set<CommandMapping>
 
     /**
      * Gets the number of registered aliases.
@@ -120,8 +121,8 @@ interface CommandManager : Dispatcher {
      * @return The result of a command being processed
      */
     override fun process(
-            source: CommandSource,
-            arguments: String
+        source: CommandSource,
+        arguments: String
     ): CommandResult
 
 }

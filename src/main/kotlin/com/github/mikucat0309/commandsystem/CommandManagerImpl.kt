@@ -5,7 +5,6 @@ import com.github.mikucat0309.commandsystem.command.CommandMessageFormatting.err
 import com.github.mikucat0309.commandsystem.command.args.ArgumentParseException
 import com.github.mikucat0309.commandsystem.command.dispatcher.Disambiguator
 import com.github.mikucat0309.commandsystem.command.dispatcher.SimpleDispatcher
-import com.github.mikucat0309.commandsystem.plugin.PluginContainer
 import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.ImmutableSet
@@ -30,9 +29,9 @@ class CommandManagerImpl
  * @param logger The logger to log error messages to
  * @param disambiguator The function to resolve a single command when multiple options are available
  */
-(
-        private val logger: Logger = LoggerFactory.getLogger(CommandManagerImpl::class.java),
-        disambiguator: Disambiguator = SimpleDispatcher.FIRST_DISAMBIGUATOR
+    (
+    private val logger: Logger = LoggerFactory.getLogger(CommandManagerImpl::class.java),
+    disambiguator: Disambiguator = SimpleDispatcher.FIRST_DISAMBIGUATOR
 ) : CommandManager {
     override fun getCommands(): Set<CommandMapping> {
         return this.dispatcher.getCommands()
@@ -51,70 +50,70 @@ class CommandManagerImpl
     }
 
     private val dispatcher: SimpleDispatcher = SimpleDispatcher(disambiguator)
-    private val owners = HashMultimap.create<PluginContainer, CommandMapping>()
-    private val reverseOwners = ConcurrentHashMap<CommandMapping, PluginContainer>()
+    private val owners = HashMultimap.create<MetaData, CommandMapping>()
+    private val reverseOwners = ConcurrentHashMap<CommandMapping, MetaData>()
     private val lock = Any()
 
-    val pluginContainers: Set<PluginContainer>
+    val metaDataSet: Set<MetaData>
         get() = synchronized(this.lock) {
             return ImmutableSet.copyOf(this.owners.keySet())
         }
 
     override fun register(
-            plugin: Any,
-            callable: CommandCallable,
-            vararg alias: String
+        metaData: MetaData,
+        callable: CommandCallable,
+        vararg alias: String
     ): CommandMapping? {
-        return register(plugin, callable, listOf(*alias))
+        return register(metaData, callable, listOf(*alias))
     }
 
     override fun register(
-            plugin: Any,
-            callable: CommandCallable,
-            aliases: List<String>
+        metaData: MetaData,
+        callable: CommandCallable,
+        aliases: List<String>
     ): CommandMapping? {
-        return register(plugin, callable, aliases, Function.identity())
+        return register(metaData, callable, aliases, Function.identity())
     }
 
     override fun register(
-            plugin: Any,
-            callable: CommandCallable,
-            aliases: List<String>,
-            callback: Function<List<String>, List<String>>
+        metaData: MetaData,
+        callable: CommandCallable,
+        aliases: List<String>,
+        callback: Function<List<String>, List<String>>
     ): CommandMapping? {
-        checkNotNull(plugin, "plugin")
+        checkNotNull(metaData, "metaData")
 
-        val container = CommandSystem.pluginManager.fromInstance(plugin)
-        requireNotNull(container) { "The provided plugin object does not have an associated plugin container " + "(in other words, is 'plugin' actually your plugin object?" }
+//        val container = CommandSystem.pluginManager.fromInstance(metaData)
+//        requireNotNull(container) { "The provided metaData object does not have an associated metaData container " + "(in other words, is 'metaData' actually your metaData object?" }
         synchronized(this.lock) {
             // <namespace>:<alias> for all commands
             val aliasesWithPrefix = ArrayList<String>(aliases.size * 3)
             for (originalAlias in aliases) {
-                val alias = this.fixAlias(container, originalAlias)
+                val alias = this.fixAlias(metaData, originalAlias)
                 if (aliasesWithPrefix.contains(alias)) {
                     this.logger
-                            .debug("Plugin '${container.id}' is attempting to register duplicate alias '$alias'")
+                        .debug("'${metaData.id}' is attempting to register duplicate alias '$alias'")
                     continue
                 }
-                val ownedCommands = this.owners.get(container)
+                val ownedCommands = this.owners.get(metaData)
                 for (mapping in this.dispatcher.getAll(alias)) {
-                    require(!ownedCommands.contains(mapping)) { "A plugin may not register multiple commands for the same alias ('$alias')!" }
+                    require(!ownedCommands.contains(mapping)) { "An id may not register multiple commands for the same alias ('$alias')!" }
                 }
 
                 aliasesWithPrefix.add(alias)
-                aliasesWithPrefix.add(container.id + ':' + alias)
+                aliasesWithPrefix.add(metaData.id + ':' + alias)
             }
 
             val mapping = this.dispatcher.register(callable, aliasesWithPrefix, callback)
-                    ?: return null
-            this.owners.put(container, mapping)
-            this.reverseOwners[mapping] = container
+                ?: return null
+            this.owners.put(metaData, mapping)
+            this.reverseOwners[mapping] = metaData
 
             return mapping
         }
     }
 
-    private fun fixAlias(pluginContainer: PluginContainer, original: String): String {
+    private fun fixAlias(metaData: MetaData, original: String): String {
         var fixed = original.toLowerCase(Locale.ENGLISH)
         val caseChanged = original != fixed
         val spaceFound = original.indexOf(' ') > -1
@@ -123,12 +122,12 @@ class CommandManagerImpl
         }
         if (caseChanged || spaceFound) {
             val description =
-                    buildAliasDescription(
-                            caseChanged,
-                            spaceFound
-                    )
+                buildAliasDescription(
+                    caseChanged,
+                    spaceFound
+                )
             this.logger.warn(
-                    "Plugin '${pluginContainer.id}' is attempting to register command '$original' with $description - adjusting to '$fixed'"
+                "id '${metaData.id}' is attempting to register command '$original' with $description - adjusting to '$fixed'"
             )
         }
         return fixed
@@ -156,16 +155,16 @@ class CommandManagerImpl
         }
     }
 
-    override fun getOwnedBy(instance: Any): Set<CommandMapping> {
-        val container = CommandSystem.pluginManager.fromInstance(instance)
-        require(container != null) { "The provided plugin object does not have an associated plugin container " + "(in other words, is 'plugin' actually your plugin object?)" }
+//    override fun getOwnedBy(instance: Any): Set<CommandMapping> {
+//        val container = CommandSystem.pluginManager.fromInstance(instance)
+//        require(container != null) { "The provided plugin object does not have an associated plugin container " + "(in other words, is 'plugin' actually your plugin object?)" }
+//
+//        synchronized(this.lock) {
+//            return ImmutableSet.copyOf(this.owners.get(container))
+//        }
+//    }
 
-        synchronized(this.lock) {
-            return ImmutableSet.copyOf(this.owners.get(container))
-        }
-    }
-
-    fun getOwner(mapping: CommandMapping): PluginContainer? {
+    fun getOwner(mapping: CommandMapping): MetaData? {
         return this.reverseOwners[checkNotNull(mapping, "mapping")]
     }
 
@@ -174,8 +173,8 @@ class CommandManagerImpl
     }
 
     override fun get(
-            alias: String,
-            source: CommandSource?
+        alias: String,
+        source: CommandSource?
     ): CommandMapping? {
         return this.dispatcher[alias, source]
     }
@@ -193,30 +192,30 @@ class CommandManagerImpl
     }
 
     override fun process(
-            source: CommandSource,
-            arguments: String
-    ): com.github.mikucat0309.commandsystem.command.CommandResult {
+        source: CommandSource,
+        arguments: String
+    ): CommandResult {
         val argSplit = arguments.split(" ".toRegex(), 2).toTypedArray()
 
         try {
             try {
                 dispatcher.process(source, arguments)
-            } catch (ex: com.github.mikucat0309.commandsystem.command.InvocationCommandException) {
+            } catch (ex: InvocationCommandException) {
                 ex.cause?.let { throw ex.cause }
-            } catch (ex: com.github.mikucat0309.commandsystem.command.CommandPermissionException) {
+            } catch (ex: CommandPermissionException) {
                 ex.message?.let { source.sendMessage(error(it)) }
-            } catch (ex: com.github.mikucat0309.commandsystem.command.CommandException) {
+            } catch (ex: CommandException) {
                 ex.message?.let { source.sendMessage(error(it)) }
 
                 if (ex.shouldIncludeUsage()) {
                     val mapping = this.dispatcher[argSplit[0], source]
                     if (mapping != null) {
                         val usage: String =
-                                if (ex is ArgumentParseException.WithUsage) {
-                                    ex.usage
-                                } else {
-                                    mapping.callable.getUsage(source)
-                                }
+                            if (ex is ArgumentParseException.WithUsage) {
+                                ex.usage
+                            } else {
+                                mapping.callable.getUsage(source)
+                            }
 
                         source.sendMessage(error("Usage: /${argSplit[0]} $usage"))
                     }
@@ -225,7 +224,7 @@ class CommandManagerImpl
             // Since we know we are in the main thread, this is safe to do without a thread check
         } catch (thr: Throwable) {
             val excBuilder: StringBuilder
-            excBuilder = if (thr is com.github.mikucat0309.commandsystem.command.TextMessageException) {
+            excBuilder = if (thr is TextMessageException) {
                 val text = thr.text
                 if (text == null) StringBuilder("null") else StringBuilder()
             } else {
@@ -235,17 +234,17 @@ class CommandManagerImpl
             val writer = StringWriter()
             thr.printStackTrace(PrintWriter(writer))
             excBuilder.append('\n').append(
-                    writer.toString()
-                            .replace("\t", "    ")
-                            .replace("\r\n", "\n")
-                            .replace("\r", "\n")
+                writer.toString()
+                    .replace("\t", "    ")
+                    .replace("\r\n", "\n")
+                    .replace("\r", "\n")
             ) // I mean I guess somebody could be running this on like OS 9?
             source.sendMessage(error("Error occurred while executing command: $excBuilder"))
             this.logger
-                    .error("Error occurred while executing command '$arguments' for source $source: ${thr.message}", thr)
+                .error("Error occurred while executing command '$arguments' for source $source: ${thr.message}", thr)
         }
 
-        return com.github.mikucat0309.commandsystem.command.CommandResult.empty()
+        return CommandResult.empty()
     }
 
     override fun getSuggestions(source: CommandSource, arguments: String): List<String> {

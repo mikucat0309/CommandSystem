@@ -15,25 +15,25 @@ class SingleArg
  * @param startIdx The starting index of `value` in an input string
  * @param endIdx   The ending index of `value` in an input string
  */
-(
-        /**
-         * Gets the string used.
-         *
-         * @return The string used
-         */
-        val value: String,
-        /**
-         * Gets the starting index.
-         *
-         * @return The starting index
-         */
-        val startIdx: Int,
-        /**
-         * Gets the ending index.
-         *
-         * @return The ending index
-         */
-        val endIdx: Int
+    (
+    /**
+     * Gets the string used.
+     *
+     * @return The string used
+     */
+    val value: String,
+    /**
+     * Gets the starting index.
+     *
+     * @return The starting index
+     */
+    val startIdx: Int,
+    /**
+     * Gets the ending index.
+     *
+     * @return The ending index
+     */
+    val endIdx: Int
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -55,9 +55,9 @@ class SingleArg
 
     override fun toString(): String {
         return MoreObjects.toStringHelper(this)
-                .add("value", this.value)
-                .add("startIdx", this.startIdx)
-                .add("endIdx", this.endIdx)
-                .toString()
+            .add("value", this.value)
+            .add("startIdx", this.startIdx)
+            .add("endIdx", this.endIdx)
+            .toString()
     }
 }

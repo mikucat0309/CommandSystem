@@ -21,7 +21,7 @@ interface CommandExecutor {
      */
     @Throws(CommandException::class)
     fun execute(
-            src: CommandSource,
-            args: CommandContext
+        src: CommandSource,
+        args: CommandContext
     ): CommandResult
 }

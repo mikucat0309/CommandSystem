@@ -16,23 +16,23 @@ import java.util.*
  * Specification for how command arguments should be parsed.
  */
 class CommandSpec internal constructor(
-        private val args: CommandElement,
-        /**
-         * Gets the active executor for this command. Generally not a good idea to call this directly,
-         * unless you are handling arg parsing specially
-         *
-         * @return The active executor for this command
-         */
-        val executor: CommandExecutor,
-        description: String?,
-        extendedDescription: String?,
-        private val permission: String?,
-        /**
-         * Gets the active input tokenizer used for this command.
-         *
-         * @return This command's input tokenizer
-         */
-        val inputTokenizer: InputTokenizer
+    private val args: CommandElement,
+    /**
+     * Gets the active executor for this command. Generally not a good idea to call this directly,
+     * unless you are handling arg parsing specially
+     *
+     * @return The active executor for this command
+     */
+    val executor: CommandExecutor,
+    description: String?,
+    extendedDescription: String?,
+    private val permission: String?,
+    /**
+     * Gets the active input tokenizer used for this command.
+     *
+     * @return This command's input tokenizer
+     */
+    val inputTokenizer: InputTokenizer
 ) : CommandCallable {
     private val description: String?
     private val extendedDescription: String?
@@ -52,9 +52,9 @@ class CommandSpec internal constructor(
      */
     @Throws(ArgumentParseException::class)
     fun populateContext(
-            source: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ) {
         this.args.parse(source, args, context)
         if (args.hasNext()) {
@@ -73,9 +73,9 @@ class CommandSpec internal constructor(
      * @return possible completions, or an empty list if none
      */
     fun complete(
-            source: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String> {
         checkNotNull(source, "source")
         val ret = this.args.complete(source, args, context)
@@ -84,12 +84,12 @@ class CommandSpec internal constructor(
 
     @Throws(CommandException::class)
     override fun process(
-            source: CommandSource,
-            arguments: String
+        source: CommandSource,
+        arguments: String
     ): CommandResult {
         val args = CommandArgs(
-                arguments,
-                inputTokenizer.tokenize(arguments, false)
+            arguments,
+            inputTokenizer.tokenize(arguments, false)
         )
         val context = CommandContext()
         this.populateContext(source, args, context)
@@ -169,20 +169,20 @@ class CommandSpec internal constructor(
 
     override fun hashCode(): Int {
         return Objects.hashCode(
-                this.args, this.executor, this.description, this.extendedDescription,
-                this.permission, this.inputTokenizer
+            this.args, this.executor, this.description, this.extendedDescription,
+            this.permission, this.inputTokenizer
         )
     }
 
     override fun toString(): String {
         return MoreObjects.toStringHelper(this)
-                .add("args", this.args)
-                .add("executor", this.executor)
-                .add("description", this.description)
-                .add("extendedDescription", this.extendedDescription)
-                .add("permission", this.permission)
-                .add("argumentParser", this.inputTokenizer)
-                .toString()
+            .add("args", this.args)
+            .add("executor", this.executor)
+            .add("description", this.description)
+            .add("extendedDescription", this.extendedDescription)
+            .add("permission", this.permission)
+            .add("argumentParser", this.inputTokenizer)
+            .toString()
     }
 
     /**
@@ -245,8 +245,8 @@ class CommandSpec internal constructor(
          * @return this
          */
         fun child(
-                child: CommandCallable,
-                vararg aliases: String
+            child: CommandCallable,
+            vararg aliases: String
         ): Builder {
             if (this.childCommandMap == null) {
                 this.childCommandMap = HashMap()
@@ -264,8 +264,8 @@ class CommandSpec internal constructor(
          * @return this
          */
         fun child(
-                child: CommandCallable,
-                aliases: Collection<String>
+            child: CommandCallable,
+            aliases: Collection<String>
         ): Builder {
             if (this.childCommandMap == null) {
                 this.childCommandMap = HashMap()
@@ -368,14 +368,14 @@ class CommandSpec internal constructor(
          */
         fun build(): CommandSpec {
             if (this.childCommandMap == null || this.childCommandMap!!.isEmpty()) {
-                checkNotNull(executor, "An executor is required")
+                checkNotNull(executor!!, "An executor is required")
             } else if (this.executor == null) {
                 val childCommandElementExecutor = registerInDispatcher(
-                        ChildCommandElementExecutor(
-                                null,
-                                null,
-                                false
-                        )
+                    ChildCommandElementExecutor(
+                        null,
+                        null,
+                        false
+                    )
                 )
                 if (this.args === DEFAULT_ARG) {
                     arguments(childCommandElementExecutor)
@@ -384,24 +384,24 @@ class CommandSpec internal constructor(
                 }
             } else {
                 arguments(
-                        registerInDispatcher(
-                                ChildCommandElementExecutor(
-                                        this.executor,
-                                        this.args,
-                                        this.childCommandFallback
-                                )
+                    registerInDispatcher(
+                        ChildCommandElementExecutor(
+                            this.executor,
+                            this.args,
+                            this.childCommandFallback
                         )
+                    )
                 )
             }
             return CommandSpec(
-                    this.args, this.executor!!, this.description, this.extendedDescription,
-                    this.permission,
-                    this.argumentParser
+                this.args, this.executor!!, this.description, this.extendedDescription,
+                this.permission,
+                this.argumentParser
             )
         }
 
         private fun registerInDispatcher(
-                childDispatcher: ChildCommandElementExecutor
+            childDispatcher: ChildCommandElementExecutor
         ): ChildCommandElementExecutor {
             for ((key, value) in this.childCommandMap!!) {
                 childDispatcher.register(value, key)
@@ -412,7 +412,6 @@ class CommandSpec internal constructor(
         }
 
         companion object {
-
             private val DEFAULT_ARG = GenericArguments.none()
         }
     }

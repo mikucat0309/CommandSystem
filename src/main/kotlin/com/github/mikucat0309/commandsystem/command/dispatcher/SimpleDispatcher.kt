@@ -19,7 +19,7 @@ class SimpleDispatcher
  * given alias
  */
 constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) :
-        Dispatcher {
+    Dispatcher {
 
     val commands: ArrayListMultimap<String, CommandMapping> = ArrayListMultimap.create<String, CommandMapping>()
 
@@ -71,8 +71,8 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
      * @return The registered command mapping, unless no aliases could be registered
      */
     fun register(
-            callable: CommandCallable,
-            vararg alias: String
+        callable: CommandCallable,
+        vararg alias: String
     ): CommandMapping? {
         checkNotNull(alias, "alias")
         return register(callable, listOf(*alias))
@@ -95,8 +95,8 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
      * @return The registered command mapping, unless no aliases could be registered
      */
     fun register(
-            callable: CommandCallable,
-            aliases: List<String>
+        callable: CommandCallable,
+        aliases: List<String>
     ): CommandMapping? {
         return register(callable, aliases, Function.identity())
     }
@@ -122,9 +122,9 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
      */
     @Synchronized
     fun register(
-            callable: CommandCallable,
-            aliases: List<String>,
-            callback: Function<List<String>, List<String>>
+        callable: CommandCallable,
+        aliases: List<String>,
+        callback: Function<List<String>, List<String>>
     ): CommandMapping? {
         var aliases = aliases
         checkNotNull(aliases, "aliases")
@@ -233,8 +233,8 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
 
     @Synchronized
     override fun get(
-            alias: String,
-            source: CommandSource?
+        alias: String,
+        source: CommandSource?
     ): CommandMapping? {
         val results = this.commands.get(alias.toLowerCase())
         var result: CommandMapping? = null
@@ -265,12 +265,13 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
 
     @Throws(CommandException::class)
     override fun process(
-            source: CommandSource,
-            arguments: String
+        source: CommandSource,
+        arguments: String
     ): CommandResult {
         val argSplit = arguments.split(" ".toRegex(), 2).toTypedArray()
         val cmd = get(argSplit[0], source) ?: throw CommandNotFoundException(
-                "commands.generic.notFound", argSplit[0]) // TODO: Fix properly to use a SpongeTranslation??
+            "commands.generic.notFound", argSplit[0]
+        ) // TODO: Fix properly to use a SpongeTranslation??
 
         val args = if (argSplit.size > 1) argSplit[1] else ""
         val spec = cmd.callable
@@ -322,7 +323,7 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
     // Filter out commands by String first
     private fun filterCommands(src: CommandSource, start: String): Set<String> {
         val map = Multimaps.filterKeys(
-                this.commands
+            this.commands
         ) { input -> input != null && input.toLowerCase().startsWith(start.toLowerCase()) }
         return map.keys().elementSet()
     }
@@ -340,11 +341,11 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
     override fun getUsage(source: CommandSource): String {
         val build = StringBuilder()
         val filteredCommands = filterCommands(source)
-                .filter {
-                    val ret = get(it, source)
-                    return@filter (ret != null && ret.primaryAlias == it)
-                }
-                .toList()
+            .filter {
+                val ret = get(it, source)
+                return@filter (ret != null && ret.primaryAlias == it)
+            }
+            .toList()
 
         val iterator = filteredCommands.iterator()
         while (iterator.hasNext()) {
@@ -368,9 +369,9 @@ constructor(private val disambiguatorFunc: Disambiguator = FIRST_DISAMBIGUATOR) 
          */
         val FIRST_DISAMBIGUATOR = object : Disambiguator {
             override fun disambiguate(
-                    source: CommandSource?,
-                    aliasUsed: String,
-                    availableOptions: List<CommandMapping>
+                source: CommandSource?,
+                aliasUsed: String,
+                availableOptions: List<CommandMapping>
             ): CommandMapping? {
                 for (mapping in availableOptions) {
                     if (mapping.primaryAlias.toLowerCase() == aliasUsed.toLowerCase()) {

@@ -8,20 +8,20 @@ import java.util.*
 import kotlin.streams.toList
 
 class CommandFlags private constructor(
-        private val childElement: CommandElement?,
-        private val usageFlags: Map<List<String>, CommandElement>,
-        private val shortFlags: Map<String, CommandElement>,
-        private val longFlags: Map<String, CommandElement>,
-        private val unknownShortFlagBehavior: UnknownFlagBehavior,
-        private val unknownLongFlagBehavior: UnknownFlagBehavior,
-        private val anchorFlags: Boolean
+    private val childElement: CommandElement?,
+    private val usageFlags: Map<List<String>, CommandElement>,
+    private val shortFlags: Map<String, CommandElement>,
+    private val longFlags: Map<String, CommandElement>,
+    private val unknownShortFlagBehavior: UnknownFlagBehavior,
+    private val unknownLongFlagBehavior: UnknownFlagBehavior,
+    private val anchorFlags: Boolean
 ) : CommandElement(null) {
 
     @Throws(ArgumentParseException::class)
     override fun parse(
-            source: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ) {
         val state = args.snapshot
         while (args.hasNext()) {
@@ -50,10 +50,10 @@ class CommandFlags private constructor(
 
     @Throws(ArgumentParseException::class)
     private fun parseLongFlag(
-            source: CommandSource,
-            longFlag: String,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        longFlag: String,
+        args: CommandArgs,
+        context: CommandContext
     ): Boolean {
         val flagSplit = longFlag.split("=".toRegex(), 2).toTypedArray()
         val flag = flagSplit[0].toLowerCase()
@@ -80,10 +80,10 @@ class CommandFlags private constructor(
 
     @Throws(ArgumentParseException::class)
     private fun parseShortFlags(
-            source: CommandSource,
-            shortFlags: String,
-            args: CommandArgs,
-            context: CommandContext
+        source: CommandSource,
+        shortFlags: String,
+        args: CommandArgs,
+        context: CommandContext
     ): Boolean {
         for (i in shortFlags.indices) {
             val shortFlag = shortFlags.substring(i, i + 1)
@@ -97,15 +97,15 @@ class CommandFlags private constructor(
                         throw args.createError("Unknown short flag $shortFlag specified")
                     }
                     UnknownFlagBehavior.ERROR -> throw args.createError(
-                            "Unknown short flag $shortFlag specified"
+                        "Unknown short flag $shortFlag specified"
                     )
                     UnknownFlagBehavior.ACCEPT_NONVALUE -> context.putArg(
-                            shortFlag,
-                            true
+                        shortFlag,
+                        true
                     )
                     UnknownFlagBehavior.ACCEPT_VALUE -> context.putArg(
-                            shortFlag,
-                            args.next()
+                        shortFlag,
+                        args.next()
                     )
                 }
             } else {
@@ -145,16 +145,16 @@ class CommandFlags private constructor(
 
     @Throws(ArgumentParseException::class)
     override fun parseValue(
-            source: CommandSource,
-            args: CommandArgs
+        source: CommandSource,
+        args: CommandArgs
     ): Any? {
         return null
     }
 
     override fun complete(
-            src: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        src: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String> {
         val state = args.snapshot
         while (args.hasNext()) {
@@ -188,19 +188,19 @@ class CommandFlags private constructor(
     }
 
     private fun tabCompleteLongFlag(
-            longFlag: String,
-            src: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        longFlag: String,
+        src: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String>? {
         val flagSplit = longFlag.split("=".toRegex(), 2).toTypedArray()
         val isSplitFlag = flagSplit.size == 2
         val element = this.longFlags[flagSplit[0].toLowerCase()]
         if (element == null || !isSplitFlag && !args.hasNext()) {
             return this.longFlags.keys.stream()
-                    .filter { startsWith(it, flagSplit[0]) }
-                    .map { f -> "--$f" }
-                    .toList()
+                .filter { startsWith(it, flagSplit[0]) }
+                .map { f -> "--$f" }
+                .toList()
         } else if (isSplitFlag) {
             args.insertArg(flagSplit[1])
         }
@@ -232,15 +232,15 @@ class CommandFlags private constructor(
 
         return if (isSplitFlag) {
             completion.stream().map { x -> "--" + flagSplit[0] + "=" + x }
-                    .toList()
+                .toList()
         } else completion
     }
 
     private fun tabCompleteShortFlags(
-            shortFlags: String,
-            src: CommandSource,
-            args: CommandArgs,
-            context: CommandContext
+        shortFlags: String,
+        src: CommandSource,
+        args: CommandArgs,
+        context: CommandContext
     ): List<String>? {
         for (i in shortFlags.indices) {
             val element = this.shortFlags[shortFlags.substring(i, i + 1)]
@@ -267,7 +267,7 @@ class CommandFlags private constructor(
                     val elements = element.complete(src, args, context)
                     return if (!elements.contains(currentText)) {
                         ImmutableList.builder<String>().add(args.peek())
-                                .addAll(element.complete(src, args, context)).build()
+                            .addAll(element.complete(src, args, context)).build()
                     } else {
                         elements
                     }
@@ -312,12 +312,12 @@ class CommandFlags private constructor(
         private val longFlags = HashMap<String, CommandElement>()
         private var unknownLongFlagBehavior = UnknownFlagBehavior.ERROR
         private var unknownShortFlagBehavior =
-                UnknownFlagBehavior.ERROR
+            UnknownFlagBehavior.ERROR
         private var anchorFlags = false
 
         private fun flag(
-                func: (String) -> CommandElement,
-                vararg specs: String
+            func: (String) -> CommandElement,
+            vararg specs: String
         ): Builder {
             val availableFlags = ArrayList<String>(specs.size)
             var el: CommandElement? = null
@@ -377,8 +377,8 @@ class CommandFlags private constructor(
          * @see .flag
          */
         fun valueFlag(
-                value: CommandElement,
-                vararg specs: String
+            value: CommandElement,
+            vararg specs: String
         ): Builder {
             return flag({ value }, *specs)
         }
@@ -393,10 +393,10 @@ class CommandFlags private constructor(
         @Deprecated("in favor of {@link #setUnknownLongFlagBehavior(UnknownFlagBehavior)}.")
         fun setAcceptsArbitraryLongFlags(acceptsArbitraryLongFlags: Boolean): Builder {
             setUnknownLongFlagBehavior(
-                    if (acceptsArbitraryLongFlags)
-                        UnknownFlagBehavior.ACCEPT_NONVALUE
-                    else
-                        UnknownFlagBehavior.ERROR
+                if (acceptsArbitraryLongFlags)
+                    UnknownFlagBehavior.ACCEPT_NONVALUE
+                else
+                    UnknownFlagBehavior.ERROR
             )
             return this
         }
@@ -454,9 +454,9 @@ class CommandFlags private constructor(
          */
         fun buildWith(wrapped: CommandElement): CommandElement {
             return CommandFlags(
-                    wrapped, this.usageFlags, this.shortFlags, this.longFlags,
-                    this.unknownShortFlagBehavior,
-                    this.unknownLongFlagBehavior, this.anchorFlags
+                wrapped, this.usageFlags, this.shortFlags, this.longFlags,
+                this.unknownShortFlagBehavior,
+                this.unknownLongFlagBehavior, this.anchorFlags
             )
         }
     }

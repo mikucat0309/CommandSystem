@@ -26,8 +26,8 @@ interface CommandCallable {
      */
     @Throws(CommandException::class)
     fun process(
-            source: CommandSource,
-            arguments: String
+        source: CommandSource,
+        arguments: String
     ): CommandResult
 
     /**

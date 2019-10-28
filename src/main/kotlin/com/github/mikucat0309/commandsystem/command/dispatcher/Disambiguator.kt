@@ -16,8 +16,8 @@ interface Disambiguator {
      * @return The specific command to use
      */
     fun disambiguate(
-            source: CommandSource?, aliasUsed: String,
-            availableOptions: List<CommandMapping>
+        source: CommandSource?, aliasUsed: String,
+        availableOptions: List<CommandMapping>
     ): CommandMapping?
 
 }
